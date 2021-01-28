@@ -64,7 +64,6 @@ class UserController {
           return;
         }
 
-
         //delete user with using transaction 
         const queryRunner = await getConnection().createQueryRunner()
             await queryRunner.startTransaction()
@@ -81,7 +80,6 @@ class UserController {
                 await queryRunner.release();
             }
       };
-
 
     // Create user 
     signUp = async(req: Request, res: Response)  => { 

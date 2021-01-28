@@ -7,6 +7,8 @@ import {
     ManyToOne,
     JoinColumn,
     AfterInsert,
+    TransactionManager,
+    EntityManager,
   } from "typeorm";
 import { Length} from "class-validator";
 import { User } from "./User";
@@ -37,8 +39,12 @@ export class Post {
     userId: string;
 
     @ManyToOne(()=> User, user => user.posts)
-    @JoinColumn({name: 'user_id'})
     user: User;
+
+
+    async deletePostsByUserId(@TransactionManager() transactionManager: EntityManager, userId: string) {
+      return await transactionManager.delete(Post, { user: userId })
+    }
     
  }
 

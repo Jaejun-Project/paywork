@@ -8,6 +8,6 @@ router.get('/',UserController.users);
 router.post('/new', UserController.signUp);
 router.get('/users', authMiddleware, UserController.index);
 router.get('/:id', UserController.getOneById);
-// router.delete('/', authMiddleware, UserController.deleteUser);
+router.delete('/', authMiddleware, UserController.deleteUser);
 ;
 export default router;

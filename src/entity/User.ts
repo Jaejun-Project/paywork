@@ -11,7 +11,6 @@ import {
 import { Length, IsNotEmpty } from "class-validator";
 import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
-import config from '../config/config';
 import {Post} from "./Post";
 
 
@@ -44,7 +43,7 @@ export class User {
     updatedAt: Date;
 
     @OneToMany(()=> Post,
-      post => post.user, { eager: true, cascade: true, onDelete: "CASCADE" })
+      post => post.user)
     posts: Array<Post>;
 
     @BeforeInsert()
@@ -57,7 +56,7 @@ export class User {
 
     generateAuthToken() {
       return jwt.sign({ id: this.id, username: this.username},
-         config.jwtSecret,
+         process.env.JWT_SECRET,
          {expiresIn: "1h"});
    }
  }

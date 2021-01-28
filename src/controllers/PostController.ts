@@ -1,5 +1,5 @@
 import { Request, Response} from 'express';
-import { getRepository, getManager, Like, Equal} from 'typeorm';
+import { getRepository, getManager, Like, Equal, TransactionManager, EntityManager} from 'typeorm';
 import { User } from '../entity/User';
 import { Post } from '../entity/Post';
 import { validate} from "class-validator";
@@ -71,7 +71,7 @@ class PostController {
         try{ 
             if(!currPost)
             {
-                return res.status(404).send('Post with the given ID was not found');
+                return res.status(404).send('Post was not found');
             }
             if(currPost.userId !== currId){
                 console.log("curr", "id", currPost.userId, currId);
@@ -167,6 +167,10 @@ class PostController {
         } catch(erros){ 
             res.status(400).send("no posts with such id")
         }
+    }
+
+    async deletePostsByUserId(@TransactionManager() transactionManager: EntityManager, userId: string) {
+        return await transactionManager.delete(Post, { user: userId })
     }
 }
 

@@ -12,7 +12,7 @@ createConnection().then(async connection => {
 
     app.use(cors());
     app.use(express.json());
-    // app.use(express.urlencoded({extended: true}));
+    app.use(express.urlencoded({extended: true}));
     
     app.use('/', routes);
     app.listen(parseInt(process.env.APP_PORT!), () => {

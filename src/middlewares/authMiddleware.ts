@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import config from '../config/config';
 
 interface TokenPayload {
     id: string;
@@ -20,7 +19,7 @@ export default function authMiddleware(
     const token = authorization.replace('Bearer', '').trim();
 
     try {
-        const data = jwt.verify(token, config.jwtSecret);
+        const data = jwt.verify(token, process.env.JWT_SECRET);
         const { id } = data as TokenPayload;
         req.userId = id 
         // res.send(data)

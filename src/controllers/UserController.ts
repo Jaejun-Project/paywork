@@ -1,6 +1,7 @@
 import { Request, Response} from 'express';
-import { getRepository} from 'typeorm';
+import { EntityManager, getConnection, getManager, getRepository, TransactionManager} from 'typeorm';
 import { User } from '../entity/User';
+import {Post} from '../entity/Post';
 import { validate} from "class-validator";
 
 
@@ -41,13 +42,14 @@ class UserController {
         }
      
       };
-/*
+
     //Delete current User
     deleteUser = async (req: Request, res: Response) => {
         //Get the ID from the url
         const id = req.userId;
       
         const userRepository = getRepository(User);
+        const postRepository = getRepository(Post);
         let user: User;
         try {
           user = await userRepository.findOneOrFail(id, {
@@ -61,20 +63,25 @@ class UserController {
           res.status(404).send("User not found");
           return;
         }
-        // await userRepository.delete(id);
-        try{
-            await userRepository.remove(user)
-            res.status(204).send();
-        }catch(err){
-            res.send(err)
-            return;
-        }
-        // await userRepository.remove(user);
-        // res.status(204).send();
-        
+
+
+        //delete user with using transaction 
+        const queryRunner = await getConnection().createQueryRunner()
+            await queryRunner.startTransaction()
+
+            try {
+                await getManager().delete(Post, {userId: id});
+                await getManager().delete(User, id)
+                await queryRunner.commitTransaction();
+                res.status(201).send("Deleted User")
+            } catch(err) {
+                await queryRunner.rollbackTransaction();
+                res.status(400).send(err)
+            } finally {
+                await queryRunner.release();
+            }
       };
 
-    */
 
     // Create user 
     signUp = async(req: Request, res: Response)  => { 
